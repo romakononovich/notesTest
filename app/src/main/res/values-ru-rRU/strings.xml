@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Notes</string>
+    <string name="add_note_title">Добавить заметку</string>
+    <string name="edit_note_title">Редактирование</string>
+    <string name="add_title">Добавить заголовок…</string>
+    <string name="add_body">Добавить содержимое…</string>
+</resources>
