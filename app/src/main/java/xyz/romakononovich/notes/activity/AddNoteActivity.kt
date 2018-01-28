@@ -6,10 +6,13 @@ import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_note.*
 import kotlinx.android.synthetic.main.toolbar.*
 import xyz.romakononovich.notes.BaseActivity
+import xyz.romakononovich.notes.Constants.FORMAT_DATE
 import xyz.romakononovich.notes.R
 import xyz.romakononovich.notes.models.Note
 import java.text.SimpleDateFormat
 import java.util.*
+
+
 
 /**
  * Created by romank on 27.01.18.
@@ -18,6 +21,7 @@ class AddNoteActivity : BaseActivity() {
     var realm: Realm = Realm.getDefaultInstance()
     private val date = Date()
 
+
     override fun getContentResId(): Int {
         return R.layout.activity_note
     }
@@ -25,7 +29,7 @@ class AddNoteActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initToolbar()
-        tv_date.text = SimpleDateFormat("dd MMMM yyyy HH:mm", Locale.getDefault()).format(date)
+        tv_date.text = SimpleDateFormat(FORMAT_DATE, Locale.getDefault()).format(date)
     }
 
     private fun initToolbar() {
@@ -45,8 +49,9 @@ class AddNoteActivity : BaseActivity() {
             note.timestamp = date.time
             realm.executeTransaction({
                 realm.insert(note)})
-                onBackPressed()
+                finish()
                 true
+
             }
         return true
     }

@@ -6,4 +6,6 @@ package xyz.romakononovich.notes
 object Constants {
     const val TIMESTAMP = "timestamp"
     const val FORMAT_DATE = "dd MMMM yyyy HH:mm"
+    const val ADD_WIDGET = "Теперь можно делать быструю заметку"
+    const val DELETE_WIDGET = "Теперь можно делать быструю заметку"
 }
