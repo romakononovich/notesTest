@@ -17,7 +17,7 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/widget" />
         </receiver>
-        <activity android:name=".activity.LoginActivity"
+        <activity android:name=".activity.LoginActivity"  android:noHistory="true"
             android:theme="@style/ToolbarWhite">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,11 +25,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.AddNoteActivity"
+        <activity android:name=".activity.AddNoteActivity" android:noHistory="true"
             android:theme="@style/ToolbarWhite"/>
-        <activity android:name=".activity.EditNoteActivity"
+        <activity android:name=".activity.EditNoteActivity" android:noHistory="true"
             android:theme="@style/ToolbarWhite"/>
-        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.MainActivity"
+            android:theme="@style/ToolbarWhite"/>
 
     </application>
 

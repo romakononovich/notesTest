@@ -4,4 +4,11 @@
     <string name="edit_note_title">Edit note</string>
     <string name="add_title">Add title…</string>
     <string name="add_body">Add content…</string>
+    <string name="login_pin_empty">Pin is empty</string>
+    <string name="login_use_fingerprint">Use fingerprint to login</string>
+    <string name="login_new_fingerprint">New fingerprint enrolled. enter pin again</string>
+    <string name="login_success">Success</string>
+    <string name="login_try_again">Try again</string>
+    <string name="enter_pin">Enter pin</string>
+    <string name="login">Login</string>
 </resources>

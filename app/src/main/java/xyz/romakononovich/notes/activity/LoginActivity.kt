@@ -15,6 +15,9 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_login.*
 import xyz.romakononovich.notes.Constants.PIN
 import xyz.romakononovich.notes.R
+import android.view.animation.AnimationUtils
+
+
 
 
 /**
@@ -33,9 +36,16 @@ class LoginActivity : AppCompatActivity() {
             et_pin.isEnabled = false
             et_pin.text.clear()
             btn_login.visibility= View.GONE
+            animateFingerPrint()
         }
         btn_login.setOnClickListener { prepareLogin() }
 
+    }
+
+    private fun animateFingerPrint() {
+        finger.visibility = View.VISIBLE
+        val shake = AnimationUtils.loadAnimation(applicationContext, R.anim.finger_print_anim)
+        finger.animation = shake
     }
 
     override fun onResume() {
@@ -44,6 +54,7 @@ class LoginActivity : AppCompatActivity() {
             et_pin.isEnabled = false
             et_pin.text.clear()
             btn_login.visibility= View.GONE
+            animateFingerPrint()
             prepareSensor()
         }
     }
@@ -60,9 +71,13 @@ class LoginActivity : AppCompatActivity() {
         val pin = et_pin.text.toString()
         if (pin.isNotEmpty()) {
             savePin(pin)
-            startActivity(Intent(this, MainActivity::class.java))
+            if (intent.extras!=null&&intent.extras.getBoolean("isWidget")) {
+                startActivity(Intent(this, AddNoteActivity::class.java))
+            } else{
+                startActivity(Intent(this, MainActivity::class.java))
+            }
         } else {
-            Toast.makeText(this, "pin is empty", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, resources.getString(R.string.login_pin_empty), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -77,12 +92,12 @@ class LoginActivity : AppCompatActivity() {
         if (FingerprintUtils.isSensorStateAt(FingerprintUtils.SensorState.READY, this)) {
             val cryptoObject = CryptoUtils.cryptoObject
             if (cryptoObject != null) {
-                Toast.makeText(this, "use fingerprint to login", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, resources.getString(R.string.login_use_fingerprint), Toast.LENGTH_LONG).show()
                 fingerprintHelper = FingerprintHelper(this)
                 fingerprintHelper!!.startAuth(cryptoObject)
             } else {
                 preferences!!.edit().remove(PIN).apply()
-                Toast.makeText(this, "new fingerprint enrolled. enter pin again", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, resources.getString(R.string.login_new_fingerprint), Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -117,13 +132,17 @@ class LoginActivity : AppCompatActivity() {
             val encoded = preferences!!.getString(PIN, null)
             val decoded = CryptoUtils.decode(encoded!!, cipher)
             et_pin.setText(decoded)
-            Toast.makeText(mContext, "success", Toast.LENGTH_SHORT).show()
-            startActivity(Intent(applicationContext, MainActivity::class.java))
+            Toast.makeText(mContext, resources.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+            if (intent.extras!=null&&intent.extras.getBoolean("isWidget")) {
+                startActivity(Intent(applicationContext, AddNoteActivity::class.java))
+            } else{
+                startActivity(Intent(applicationContext, MainActivity::class.java))
+            }
 
         }
 
         override fun onAuthenticationFailed() {
-            Toast.makeText(mContext, "try again", Toast.LENGTH_SHORT).show()
+            Toast.makeText(mContext, resources.getString(R.string.login_try_again), Toast.LENGTH_SHORT).show()
         }
 
     }

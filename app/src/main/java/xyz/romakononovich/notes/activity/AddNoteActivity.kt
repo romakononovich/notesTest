@@ -49,7 +49,7 @@ class AddNoteActivity : BaseActivity() {
             note.timestamp = date.time
             realm.executeTransaction({
                 realm.insert(note)})
-                finish()
+            finish()
                 true
 
             }
@@ -57,7 +57,7 @@ class AddNoteActivity : BaseActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
+        finish()
         return true
     }
 

@@ -5,4 +5,11 @@
     <string name="edit_note_title">Редактирование</string>
     <string name="add_title">Добавить заголовок…</string>
     <string name="add_body">Добавить содержимое…</string>
+    <string name="login_pin_empty">Введите пин-код</string>
+    <string name="login_use_fingerprint">Используйте отпечаток пальца для входа</string>
+    <string name="login_new_fingerprint">Новый отпечаток добавлен. Введите пароль заново</string>
+    <string name="login_success">Успешно</string>
+    <string name="login_try_again">Попробуйте сново</string>
+    <string name="enter_pin">Введите пин-код</string>
+    <string name="login">Войти</string>
 </resources>

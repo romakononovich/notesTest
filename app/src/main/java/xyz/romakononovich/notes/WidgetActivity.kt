@@ -12,8 +12,7 @@ import android.widget.TextView
 import xyz.romakononovich.notes.Constants.ADD_WIDGET
 import xyz.romakononovich.notes.Constants.DELETE_WIDGET
 import xyz.romakononovich.notes.activity.AddNoteActivity
-
-
+import xyz.romakononovich.notes.activity.LoginActivity
 
 
 /**
@@ -49,9 +48,9 @@ class WidgetActivity : AppWidgetProvider() {
 
             val views = RemoteViews(context.packageName, R.layout.activity_widget)
             // Create an Intent to launch Activity
-            val intent = Intent(context, AddNoteActivity::class.java)
+            val intent = Intent(context, LoginActivity::class.java).putExtra("isWidget",true)
             val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-            views.setOnClickPendingIntent(R.id.iv_widget, pendingIntent)
+            views.setOnClickPendingIntent(R.id.widget, pendingIntent)
 
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetId, views)
