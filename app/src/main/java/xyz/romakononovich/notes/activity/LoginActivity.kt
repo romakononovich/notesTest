@@ -18,8 +18,6 @@ import xyz.romakononovich.notes.R
 import android.view.animation.AnimationUtils
 
 
-
-
 /**
  * Created by romank on 28.01.18.
  */
@@ -32,10 +30,10 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (preferences!!.contains(PIN)){
+        if (preferences!!.contains(PIN)) {
             et_pin.isEnabled = false
             et_pin.text.clear()
-            btn_login.visibility= View.GONE
+            btn_login.visibility = View.GONE
             animateFingerPrint()
         }
         btn_login.setOnClickListener { prepareLogin() }
@@ -53,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
         if (preferences!!.contains(PIN)) {
             et_pin.isEnabled = false
             et_pin.text.clear()
-            btn_login.visibility= View.GONE
+            btn_login.visibility = View.GONE
             animateFingerPrint()
             prepareSensor()
         }
@@ -71,9 +69,9 @@ class LoginActivity : AppCompatActivity() {
         val pin = et_pin.text.toString()
         if (pin.isNotEmpty()) {
             savePin(pin)
-            if (intent.extras!=null&&intent.extras.getBoolean("isWidget")) {
+            if (intent.extras != null && intent.extras.getBoolean("isWidget")) {
                 startActivity(Intent(this, AddNoteActivity::class.java))
-            } else{
+            } else {
                 startActivity(Intent(this, MainActivity::class.java))
             }
         } else {
@@ -133,9 +131,9 @@ class LoginActivity : AppCompatActivity() {
             val decoded = CryptoUtils.decode(encoded!!, cipher)
             et_pin.setText(decoded)
             Toast.makeText(mContext, resources.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
-            if (intent.extras!=null&&intent.extras.getBoolean("isWidget")) {
+            if (intent.extras != null && intent.extras.getBoolean("isWidget")) {
                 startActivity(Intent(applicationContext, AddNoteActivity::class.java))
-            } else{
+            } else {
                 startActivity(Intent(applicationContext, MainActivity::class.java))
             }
 
@@ -144,8 +142,5 @@ class LoginActivity : AppCompatActivity() {
         override fun onAuthenticationFailed() {
             Toast.makeText(mContext, resources.getString(R.string.login_try_again), Toast.LENGTH_SHORT).show()
         }
-
     }
-
-
 }

@@ -208,11 +208,11 @@ object CryptoUtils {
 
     @Throws(KeyStoreException::class, InvalidKeySpecException::class, NoSuchAlgorithmException::class, InvalidKeyException::class, InvalidAlgorithmParameterException::class)
     private fun initEncodeCipher(mode: Int) {
-        val key = sKeyStore!!.getCertificate(KEY_ALIAS).getPublicKey()
+        val key = sKeyStore!!.getCertificate(KEY_ALIAS).publicKey
 
         // workaround for using public key
         // from https://developer.android.com/reference/android/security/keystore/KeyGenParameterSpec.html
-        val unrestricted = KeyFactory.getInstance(key.getAlgorithm()).generatePublic(X509EncodedKeySpec(key.getEncoded()))
+        val unrestricted = KeyFactory.getInstance(key.getAlgorithm()).generatePublic(X509EncodedKeySpec(key.encoded))
         // from https://code.google.com/p/android/issues/detail?id=197719
         val spec = OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT)
 

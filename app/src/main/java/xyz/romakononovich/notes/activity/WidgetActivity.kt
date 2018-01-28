@@ -1,4 +1,4 @@
-package xyz.romakononovich.notes
+package xyz.romakononovich.notes.activity
 
 import android.appwidget.AppWidgetProvider
 import android.widget.Toast
@@ -11,8 +11,7 @@ import android.view.Gravity
 import android.widget.TextView
 import xyz.romakononovich.notes.Constants.ADD_WIDGET
 import xyz.romakononovich.notes.Constants.DELETE_WIDGET
-import xyz.romakononovich.notes.activity.AddNoteActivity
-import xyz.romakononovich.notes.activity.LoginActivity
+import xyz.romakononovich.notes.R
 
 
 /**
@@ -31,7 +30,6 @@ class WidgetActivity : AppWidgetProvider() {
         val v = toast.view.findViewById<TextView>(android.R.id.message)
         v.gravity = Gravity.CENTER
         toast.show()
-
     }
 
     override fun onDisabled(context: Context) {
