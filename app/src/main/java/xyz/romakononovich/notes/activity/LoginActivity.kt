@@ -36,12 +36,6 @@ class LoginActivity : BaseActivity() {
             setDisplayShowTitleEnabled(false)
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (preferences.contains(PIN)) {
-            et_pin.isEnabled = false
-            et_pin.text.clear()
-            btn_login.visibility = View.GONE
-            finger.visibility = View.VISIBLE
-        }
         btn_login.setOnClickListener { prepareLogin() }
 
     }
@@ -122,8 +116,8 @@ class LoginActivity : BaseActivity() {
             toast(helpString)
         }
 
-        override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult?) {
-            val cipher = result!!.cryptoObject.cipher
+        override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult) {
+            val cipher = result.cryptoObject.cipher
             val encoded = preferences.getString(PIN, null)
             val decoded = CryptoUtils.decode(encoded, cipher)
             et_pin.setText(decoded)
