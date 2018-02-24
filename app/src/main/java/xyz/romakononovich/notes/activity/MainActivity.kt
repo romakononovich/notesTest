@@ -10,6 +10,7 @@ import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.toolbar.*
 import xyz.romakononovich.notes.BaseActivity
 import xyz.romakononovich.notes.Constants.TIMESTAMP
 import xyz.romakononovich.notes.R
@@ -23,7 +24,7 @@ import java.util.*
 
 class MainActivity : BaseActivity() {
     private lateinit var rvAdapter: RvAdapter
-    var realm: Realm = Realm.getDefaultInstance()
+    val realm: Realm = Realm.getDefaultInstance()
     lateinit var listNotes: ArrayList<Note>
 
     override fun getContentResId(): Int {
@@ -33,17 +34,14 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initToolbar()
+        setupActionBar {
+            title = resources.getString(R.string.app_name)
+        }
         initView()
         initSwipe()
 
     }
 
-    private fun initToolbar() {
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        title = resources.getString(R.string.app_name)
-    }
 
     private fun initView() {
         rv.setHasFixedSize(true)
@@ -61,7 +59,7 @@ class MainActivity : BaseActivity() {
             }
         })
         fab.setOnClickListener {
-            startActivity(Intent(applicationContext, AddNoteActivity::class.java))
+            startActivity(AddNoteActivity::class.java)
         }
     }
 
@@ -88,7 +86,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun getNotesFromDB(): ArrayList<Note> {
-        val list: ArrayList<Note> = ArrayList()
+        val list = ArrayList<Note>()
         lateinit var realmNotes: RealmResults<Note>
         realm.executeTransaction {
             realmNotes = realm.where(Note::class.java).sort(TIMESTAMP, Sort.DESCENDING).findAll()

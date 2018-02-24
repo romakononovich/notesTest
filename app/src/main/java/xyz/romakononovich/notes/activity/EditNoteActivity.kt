@@ -17,7 +17,7 @@ import java.util.*
  * Created by romank on 27.01.18.
  */
 class EditNoteActivity: BaseActivity() {
-    var realm: Realm = Realm.getDefaultInstance()
+    val realm: Realm = Realm.getDefaultInstance()
     private var timestamp: Long = 0
     private val date = Date()
 
@@ -32,8 +32,10 @@ class EditNoteActivity: BaseActivity() {
 
     private fun initToolbar() {
         title = resources.getString(R.string.edit_note_title)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setDisplayShowHomeEnabled(true)
+        setupActionBar {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+        }
         toolbar.setNavigationIcon(R.drawable.ic_close)
     }
 

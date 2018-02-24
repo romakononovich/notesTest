@@ -33,16 +33,16 @@ import javax.crypto.spec.PSource
 object CryptoUtils {
 
 
-    private var sKeyStore: KeyStore? = null
-    private var sKeyPairGenerator: KeyPairGenerator? = null
-    private var sCipher: Cipher? = null
+    private lateinit var sKeyStore: KeyStore
+    private lateinit var sKeyPairGenerator: KeyPairGenerator
+    private lateinit var sCipher: Cipher
 
 
     private val keyStore: Boolean
         get() {
             try {
                 sKeyStore = KeyStore.getInstance(KEY_STORE)
-                sKeyStore!!.load(null)
+                sKeyStore.load(null)
                 return true
             } catch (e: KeyStoreException) {
                 e.printStackTrace()
@@ -92,7 +92,7 @@ object CryptoUtils {
     private val key: Boolean
         get() {
             try {
-                return sKeyStore!!.containsAlias(KEY_ALIAS) || generateNewKey()
+                return sKeyStore.containsAlias(KEY_ALIAS) || generateNewKey()
             } catch (e: KeyStoreException) {
                 e.printStackTrace()
             }
@@ -110,7 +110,7 @@ object CryptoUtils {
     fun encode(inputString: String): String? {
         try {
             if (prepare() && initCipher(Cipher.ENCRYPT_MODE)) {
-                val bytes = sCipher!!.doFinal(inputString.toByteArray())
+                val bytes = sCipher.doFinal(inputString.toByteArray())
                 return Base64.encodeToString(bytes, Base64.NO_WRAP)
             }
         } catch (exception: IllegalBlockSizeException) {
@@ -147,13 +147,13 @@ object CryptoUtils {
         if (keyPairGenerator) {
 
             try {
-                sKeyPairGenerator!!.initialize(
+                sKeyPairGenerator.initialize(
                         KeyGenParameterSpec.Builder(KEY_ALIAS, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
                                 .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
                                 .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_OAEP)
                                 .setUserAuthenticationRequired(true)
                                 .build())
-                sKeyPairGenerator!!.generateKeyPair()
+                sKeyPairGenerator.generateKeyPair()
                 return true
             } catch (e: InvalidAlgorithmParameterException) {
                 e.printStackTrace()
@@ -166,7 +166,7 @@ object CryptoUtils {
 
     private fun initCipher(mode: Int): Boolean {
         try {
-            sKeyStore!!.load(null)
+            sKeyStore.load(null)
 
             when (mode) {
                 Cipher.ENCRYPT_MODE -> initEncodeCipher(mode)
@@ -202,27 +202,27 @@ object CryptoUtils {
 
     @Throws(KeyStoreException::class, NoSuchAlgorithmException::class, UnrecoverableKeyException::class, InvalidKeyException::class)
     private fun initDecodeCipher(mode: Int) {
-        val key = sKeyStore!!.getKey(KEY_ALIAS, null) as PrivateKey
-        sCipher!!.init(mode, key)
+        val key = sKeyStore.getKey(KEY_ALIAS, null) as PrivateKey
+        sCipher.init(mode, key)
     }
 
     @Throws(KeyStoreException::class, InvalidKeySpecException::class, NoSuchAlgorithmException::class, InvalidKeyException::class, InvalidAlgorithmParameterException::class)
     private fun initEncodeCipher(mode: Int) {
-        val key = sKeyStore!!.getCertificate(KEY_ALIAS).publicKey
+        val key = sKeyStore.getCertificate(KEY_ALIAS).publicKey
 
         // workaround for using public key
         // from https://developer.android.com/reference/android/security/keystore/KeyGenParameterSpec.html
-        val unrestricted = KeyFactory.getInstance(key.getAlgorithm()).generatePublic(X509EncodedKeySpec(key.encoded))
+        val unrestricted = KeyFactory.getInstance(key.algorithm).generatePublic(X509EncodedKeySpec(key.encoded))
         // from https://code.google.com/p/android/issues/detail?id=197719
         val spec = OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA1, PSource.PSpecified.DEFAULT)
 
-        sCipher!!.init(mode, unrestricted, spec)
+        sCipher.init(mode, unrestricted, spec)
     }
 
     private fun deleteInvalidKey() {
         if (keyStore) {
             try {
-                sKeyStore!!.deleteEntry(KEY_ALIAS)
+                sKeyStore.deleteEntry(KEY_ALIAS)
             } catch (e: KeyStoreException) {
                 e.printStackTrace()
             }

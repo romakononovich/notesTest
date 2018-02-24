@@ -3,8 +3,10 @@ package xyz.romakononovich.notes.adapter
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import kotlinx.android.synthetic.main.item_note.view.*
 import xyz.romakononovich.notes.Constants.FORMAT_DATE
 import xyz.romakononovich.notes.Constants.TIMESTAMP
@@ -43,6 +45,7 @@ class RvAdapter(private val listNotes: ArrayList<Note>) : RecyclerView.Adapter<R
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindItems(listNotes[position])
+        holder.noteTitle
     }
 
     fun removeItem(position: Int) {
@@ -55,11 +58,13 @@ class RvAdapter(private val listNotes: ArrayList<Note>) : RecyclerView.Adapter<R
 
     class ViewHolder(private val v: View) : RecyclerView.ViewHolder(v) {
 
+        var noteTitle = itemView.tv_title
         fun bindItems(note: Note) {
             v.tv_title.text = note.title
             v.tv_note.text = note.note
             v.tv_date.text = setDate(note.timestamp)
         }
+
 
         private fun setDate(timestamp: Long): String {
             val dateFormat = SimpleDateFormat(FORMAT_DATE, Locale.getDefault())

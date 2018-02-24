@@ -1,8 +1,15 @@
 package xyz.romakononovich.notes
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.support.annotation.IdRes
+import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.Gravity
+import android.widget.TextView
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_base.*
 
 /**
@@ -23,4 +30,18 @@ abstract class BaseActivity: AppCompatActivity() {
     }
     abstract fun getContentResId(): Int
 
+    fun AppCompatActivity.setupActionBar(action: ActionBar.() -> Unit) {
+        supportActionBar?.apply {
+            action()
+        }
+    }
+     fun Context.toast(message: CharSequence): Toast = Toast
+            .makeText(this, message, Toast.LENGTH_SHORT)
+            .apply {
+                view.findViewById<TextView>(android.R.id.message).gravity = Gravity.CENTER
+                show()
+            }
+    fun Context.startActivity(cls: Class<*>){
+        startActivity(Intent(this,cls))
+    }
 }

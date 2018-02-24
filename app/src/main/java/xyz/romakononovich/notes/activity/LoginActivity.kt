@@ -1,67 +1,72 @@
 package xyz.romakononovich.notes.activity
 
-import android.widget.Toast
 import xyz.romakononovich.notes.fingerprint.CryptoUtils
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat
 import xyz.romakononovich.notes.fingerprint.FingerprintUtils
-import android.content.Intent
 import android.content.Context
 import android.preference.PreferenceManager
 import android.os.Bundle
 import android.content.SharedPreferences
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
+import android.support.graphics.drawable.AnimatedVectorDrawableCompat
 import android.support.v4.os.CancellationSignal
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.activity_login.*
 import xyz.romakononovich.notes.Constants.PIN
 import xyz.romakononovich.notes.R
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
+import xyz.romakononovich.notes.BaseActivity
 
 
 /**
  * Created by romank on 28.01.18.
  */
-class LoginActivity : AppCompatActivity() {
-    private var preferences: SharedPreferences? = null
-    private var fingerprintHelper: FingerprintHelper? = null
+class LoginActivity : BaseActivity() {
+    override fun getContentResId(): Int {
+        return R.layout.activity_login
+    }
+
+    private lateinit var preferences: SharedPreferences
+    private lateinit var fingerprintHelper: FingerprintHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-
+        setupActionBar {
+            setDisplayShowTitleEnabled(false)
+        }
         preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        if (preferences!!.contains(PIN)) {
+        if (preferences.contains(PIN)) {
             et_pin.isEnabled = false
             et_pin.text.clear()
             btn_login.visibility = View.GONE
-            animateFingerPrint()
+            animateFingerPrint(R.anim.finger_print_anim)
         }
         btn_login.setOnClickListener { prepareLogin() }
 
     }
 
-    private fun animateFingerPrint() {
+    private fun animateFingerPrint(animId: Int) {
         finger.visibility = View.VISIBLE
-        val shake = AnimationUtils.loadAnimation(applicationContext, R.anim.finger_print_anim)
+        val shake = AnimationUtils.loadAnimation(applicationContext, animId)
         finger.animation = shake
     }
 
     override fun onResume() {
         super.onResume()
-        if (preferences!!.contains(PIN)) {
+        if (preferences.contains(PIN)) {
             et_pin.isEnabled = false
             et_pin.text.clear()
             btn_login.visibility = View.GONE
-            animateFingerPrint()
+            animateFingerPrint(R.anim.finger_print_anim)
             prepareSensor()
         }
     }
 
     override fun onStop() {
         super.onStop()
-        if (fingerprintHelper != null) {
-            fingerprintHelper!!.cancel()
-        }
+        fingerprintHelper.cancel()
     }
 
     private fun prepareLogin() {
@@ -69,20 +74,21 @@ class LoginActivity : AppCompatActivity() {
         val pin = et_pin.text.toString()
         if (pin.isNotEmpty()) {
             savePin(pin)
+            animation(finger)
             if (intent.extras != null && intent.extras.getBoolean("isWidget")) {
-                startActivity(Intent(this, AddNoteActivity::class.java))
+                startActivity(AddNoteActivity::class.java)
             } else {
-                startActivity(Intent(this, MainActivity::class.java))
+                startActivity(MainActivity::class.java)
             }
         } else {
-            Toast.makeText(this, resources.getString(R.string.login_pin_empty), Toast.LENGTH_SHORT).show()
+            toast(resources.getString(R.string.login_pin_empty))
         }
     }
 
     private fun savePin(pin: String) {
         if (FingerprintUtils.isSensorStateAt(FingerprintUtils.SensorState.READY, this)) {
             val encoded = CryptoUtils.encode(pin)
-            preferences!!.edit().putString(PIN, encoded).apply()
+            preferences.edit().putString(PIN, encoded).apply()
         }
     }
 
@@ -90,57 +96,70 @@ class LoginActivity : AppCompatActivity() {
         if (FingerprintUtils.isSensorStateAt(FingerprintUtils.SensorState.READY, this)) {
             val cryptoObject = CryptoUtils.cryptoObject
             if (cryptoObject != null) {
-                Toast.makeText(this, resources.getString(R.string.login_use_fingerprint), Toast.LENGTH_LONG).show()
+                toast(resources.getString(R.string.login_use_fingerprint))
                 fingerprintHelper = FingerprintHelper(this)
-                fingerprintHelper!!.startAuth(cryptoObject)
+                fingerprintHelper.startAuth(cryptoObject)
             } else {
-                preferences!!.edit().remove(PIN).apply()
-                Toast.makeText(this, resources.getString(R.string.login_new_fingerprint), Toast.LENGTH_SHORT).show()
+                preferences.edit().remove(PIN).apply()
+                toast(resources.getString(R.string.login_new_fingerprint))
             }
 
         }
     }
 
 
-    inner class FingerprintHelper internal constructor(private val mContext: Context) : FingerprintManagerCompat.AuthenticationCallback() {
-        private var mCancellationSignal: CancellationSignal? = null
+    inner class FingerprintHelper internal constructor(private val context: Context) : FingerprintManagerCompat.AuthenticationCallback() {
+        private lateinit var cancellationSignal: CancellationSignal
 
         internal fun startAuth(cryptoObject: FingerprintManagerCompat.CryptoObject) {
-            mCancellationSignal = CancellationSignal()
-            val manager = FingerprintManagerCompat.from(mContext)
-            manager.authenticate(cryptoObject, 0, mCancellationSignal, this, null)
+            cancellationSignal = CancellationSignal()
+            val manager = FingerprintManagerCompat.from(context)
+            manager.authenticate(cryptoObject, 0, cancellationSignal, this, null)
         }
 
         internal fun cancel() {
-            if (mCancellationSignal != null) {
-                mCancellationSignal!!.cancel()
-            }
+            cancellationSignal.cancel()
         }
 
-        override fun onAuthenticationError(errMsgId: Int, errString: CharSequence?) {
-            Toast.makeText(mContext, errString, Toast.LENGTH_SHORT).show()
+        override fun onAuthenticationError(errMsgId: Int, errString: CharSequence) {
+            toast(errString)
         }
 
-        override fun onAuthenticationHelp(helpMsgId: Int, helpString: CharSequence?) {
-            Toast.makeText(mContext, helpString, Toast.LENGTH_SHORT).show()
+        override fun onAuthenticationHelp(helpMsgId: Int, helpString: CharSequence) {
+            toast(helpString)
         }
 
         override fun onAuthenticationSucceeded(result: FingerprintManagerCompat.AuthenticationResult?) {
             val cipher = result!!.cryptoObject.cipher
-            val encoded = preferences!!.getString(PIN, null)
-            val decoded = CryptoUtils.decode(encoded!!, cipher)
+            val encoded = preferences.getString(PIN, null)
+            val decoded = CryptoUtils.decode(encoded, cipher)
             et_pin.setText(decoded)
-            Toast.makeText(mContext, resources.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+            toast(resources.getString(R.string.login_success))
+            animation(finger)
             if (intent.extras != null && intent.extras.getBoolean("isWidget")) {
-                startActivity(Intent(applicationContext, AddNoteActivity::class.java))
+                startActivity(AddNoteActivity::class.java)
             } else {
-                startActivity(Intent(applicationContext, MainActivity::class.java))
+                startActivity(MainActivity::class.java)
             }
 
         }
 
+
         override fun onAuthenticationFailed() {
-            Toast.makeText(mContext, resources.getString(R.string.login_try_again), Toast.LENGTH_SHORT).show()
+            toast(resources.getString(R.string.login_try_again))
         }
+    }
+    fun animation(view: View){
+        val v: ImageView = view as ImageView
+        val d: Drawable = v.drawable
+        if (d is AnimatedVectorDrawableCompat ) {
+            val avd: AnimatedVectorDrawableCompat = d
+            avd.start()
+        } else if (d is AnimatedVectorDrawable) {
+            val avd: AnimatedVectorDrawable = d
+            avd.start()
+        }
+
+
     }
 }

@@ -9,6 +9,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.view.Gravity
 import android.widget.TextView
+import xyz.romakononovich.notes.BaseActivity
 import xyz.romakononovich.notes.Constants.ADD_WIDGET
 import xyz.romakononovich.notes.Constants.DELETE_WIDGET
 import xyz.romakononovich.notes.R
@@ -26,17 +27,17 @@ class WidgetActivity : AppWidgetProvider() {
 
 
     override fun onEnabled(context: Context) {
-        val toast = Toast.makeText(context,ADD_WIDGET,Toast.LENGTH_SHORT)
-        val v = toast.view.findViewById<TextView>(android.R.id.message)
-        v.gravity = Gravity.CENTER
-        toast.show()
+        Toast.makeText(context, ADD_WIDGET, Toast.LENGTH_SHORT).apply{
+            view.findViewById<TextView>(android.R.id.message).gravity = Gravity.CENTER
+            show()
+        }
     }
 
     override fun onDisabled(context: Context) {
-        val toast = Toast.makeText(context, DELETE_WIDGET,Toast.LENGTH_SHORT)
-        val v = toast.view.findViewById<TextView>(android.R.id.message)
-        v.gravity = Gravity.CENTER
-        toast.show()
+        Toast.makeText(context, DELETE_WIDGET, Toast.LENGTH_SHORT).apply{
+            view.findViewById<TextView>(android.R.id.message).gravity = Gravity.CENTER
+            show()
+        }
     }
 
     companion object {

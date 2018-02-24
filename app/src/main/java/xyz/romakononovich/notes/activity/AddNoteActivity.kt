@@ -18,7 +18,7 @@ import java.util.*
  * Created by romank on 27.01.18.
  */
 class AddNoteActivity : BaseActivity() {
-    var realm: Realm = Realm.getDefaultInstance()
+    val realm: Realm = Realm.getDefaultInstance()
     private val date = Date()
 
 
@@ -28,16 +28,15 @@ class AddNoteActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initToolbar()
+        setupActionBar {
+            setDisplayHomeAsUpEnabled(true)
+            setDisplayShowHomeEnabled(true)
+            title = resources.getString(R.string.add_note_title)
+            toolbar.setNavigationIcon(R.drawable.ic_close)
+        }
         tv_date.text = SimpleDateFormat(FORMAT_DATE, Locale.getDefault()).format(date)
     }
 
-    private fun initToolbar() {
-        title = resources.getString(R.string.add_note_title)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setDisplayShowHomeEnabled(true)
-        toolbar.setNavigationIcon(R.drawable.ic_close)
-    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_add_note, menu)
