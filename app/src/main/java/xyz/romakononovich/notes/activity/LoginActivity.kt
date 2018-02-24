@@ -15,7 +15,6 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_login.*
 import xyz.romakononovich.notes.Constants.PIN
 import xyz.romakononovich.notes.R
-import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import xyz.romakononovich.notes.BaseActivity
 
@@ -41,16 +40,10 @@ class LoginActivity : BaseActivity() {
             et_pin.isEnabled = false
             et_pin.text.clear()
             btn_login.visibility = View.GONE
-            animateFingerPrint(R.anim.finger_print_anim)
+            finger.visibility = View.VISIBLE
         }
         btn_login.setOnClickListener { prepareLogin() }
 
-    }
-
-    private fun animateFingerPrint(animId: Int) {
-        finger.visibility = View.VISIBLE
-        val shake = AnimationUtils.loadAnimation(applicationContext, animId)
-        finger.animation = shake
     }
 
     override fun onResume() {
@@ -59,7 +52,7 @@ class LoginActivity : BaseActivity() {
             et_pin.isEnabled = false
             et_pin.text.clear()
             btn_login.visibility = View.GONE
-            animateFingerPrint(R.anim.finger_print_anim)
+            finger.visibility = View.VISIBLE
             prepareSensor()
         }
     }
@@ -74,7 +67,7 @@ class LoginActivity : BaseActivity() {
         val pin = et_pin.text.toString()
         if (pin.isNotEmpty()) {
             savePin(pin)
-            animation(finger)
+            animation(finger, true)
             if (intent.extras != null && intent.extras.getBoolean("isWidget")) {
                 startActivity(AddNoteActivity::class.java)
             } else {
@@ -135,7 +128,7 @@ class LoginActivity : BaseActivity() {
             val decoded = CryptoUtils.decode(encoded, cipher)
             et_pin.setText(decoded)
             toast(resources.getString(R.string.login_success))
-            animation(finger)
+            animation(finger, true)
             if (intent.extras != null && intent.extras.getBoolean("isWidget")) {
                 startActivity(AddNoteActivity::class.java)
             } else {
@@ -146,13 +139,19 @@ class LoginActivity : BaseActivity() {
 
 
         override fun onAuthenticationFailed() {
+            animation(finger, false)
             toast(resources.getString(R.string.login_try_again))
         }
     }
-    fun animation(view: View){
+
+    fun animation(view: View, isOk: Boolean) {
         val v: ImageView = view as ImageView
+        when {
+            isOk -> v.setImageResource(R.drawable.finger_print_anim_ok)
+            !isOk -> v.setImageResource(R.drawable.finger_print_anim_error)
+        }
         val d: Drawable = v.drawable
-        if (d is AnimatedVectorDrawableCompat ) {
+        if (d is AnimatedVectorDrawableCompat) {
             val avd: AnimatedVectorDrawableCompat = d
             avd.start()
         } else if (d is AnimatedVectorDrawable) {
