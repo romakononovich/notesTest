@@ -4,16 +4,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.support.v7.widget.helper.ItemTouchHelper
-import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.toolbar.*
 import xyz.romakononovich.notes.BaseActivity
-import xyz.romakononovich.notes.Constants.TIMESTAMP
 import xyz.romakononovich.notes.R
+import xyz.romakononovich.notes.TIMESTAMP
 import xyz.romakononovich.notes.adapter.RvAdapter
 import xyz.romakononovich.notes.models.Note
 import java.util.*
@@ -22,9 +19,9 @@ import java.util.*
  * Created by romank on 27.01.18.
  */
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), RvAdapter.ItemClickListener {
+
     private lateinit var rvAdapter: RvAdapter
-    val realm: Realm = Realm.getDefaultInstance()
     lateinit var listNotes: ArrayList<Note>
 
     override fun getContentResId(): Int {
@@ -34,7 +31,7 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupActionBar {
+        supportActionBar?.apply {
             title = resources.getString(R.string.app_name)
         }
         initView()
@@ -46,7 +43,7 @@ class MainActivity : BaseActivity() {
     private fun initView() {
         rv.setHasFixedSize(true)
         rv.layoutManager = LinearLayoutManager(applicationContext)
-        rvAdapter = RvAdapter(getNotesFromDB())
+        rvAdapter = RvAdapter(this, this, getNotesFromDB())
         rv.adapter = rvAdapter
         rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
@@ -61,6 +58,12 @@ class MainActivity : BaseActivity() {
         fab.setOnClickListener {
             startActivity(AddNoteActivity::class.java)
         }
+    }
+
+    override fun onItemClicked(viewHolder: RvAdapter.ViewHolder) {
+        val intent = Intent(this, EditNoteActivity::class.java)
+        intent.putExtra(TIMESTAMP, listNotes[viewHolder.adapterPosition].timestamp)
+        startActivity(intent)
     }
 
     private fun initSwipe() {
@@ -86,7 +89,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun getNotesFromDB(): ArrayList<Note> {
-        val list = ArrayList<Note>()
+        val list = mutableListOf<Note>()
         lateinit var realmNotes: RealmResults<Note>
         realm.executeTransaction {
             realmNotes = realm.where(Note::class.java).sort(TIMESTAMP, Sort.DESCENDING).findAll()
@@ -94,7 +97,7 @@ class MainActivity : BaseActivity() {
                 list.addAll(realmNotes.toTypedArray())
             }
         }
-        listNotes = list
+        listNotes = list as ArrayList<Note>
         return list
 
     }
@@ -105,8 +108,4 @@ class MainActivity : BaseActivity() {
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        realm.close()
-    }
 }

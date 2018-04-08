@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tv_title"
+            android:id="@+id/tvTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
@@ -25,16 +25,16 @@
             tools:text="Title" />
 
         <TextView
-            android:id="@+id/tv_note"
+            android:id="@+id/tvNote"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_weight="3"
+            android:ellipsize="end"
             android:maxLines="3"
             android:textColor="@android:color/white"
             android:textSize="14sp"
-            android:ellipsize="end"
             tools:text="Too many type sizes and styles at once can wreck any layout. A typographic scale has a limited set of type sizes that work well together along with the layout grid." />
 
         <LinearLayout
@@ -44,13 +44,13 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tv_date"
+                android:id="@+id/tvDate"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginBottom="3dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginBottom="3dp"
                 android:layout_weight="4"
                 android:textColor="#9E9E9E"
                 tools:ignore="NestedWeights"

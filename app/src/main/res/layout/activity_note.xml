@@ -9,7 +9,7 @@
     <include layout="@layout/toolbar" />
 
     <TextView
-        android:id="@+id/tv_date"
+        android:id="@+id/tvDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
@@ -19,26 +19,27 @@
         tools:text="Date" />
 
     <EditText
-        android:id="@+id/et_title"
+        android:id="@+id/etTitle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_weight="1"
-        android:background = "@drawable/edit_text_bg"
+        android:background="@drawable/edit_text_bg"
         android:hint="@string/add_title"
+        android:maxLines="2"
         android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/et_note"
+        android:id="@+id/etNote"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_weight="5"
-        android:background = "@drawable/edit_text_bg"
+        android:background="@drawable/edit_text_bg"
         android:gravity="top"
         android:hint="@string/add_body" />
 </LinearLayout>

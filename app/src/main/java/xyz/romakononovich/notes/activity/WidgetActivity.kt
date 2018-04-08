@@ -9,9 +9,8 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.view.Gravity
 import android.widget.TextView
-import xyz.romakononovich.notes.BaseActivity
-import xyz.romakononovich.notes.Constants.ADD_WIDGET
-import xyz.romakononovich.notes.Constants.DELETE_WIDGET
+import xyz.romakononovich.notes.ADD_WIDGET
+import xyz.romakononovich.notes.DELETE_WIDGET
 import xyz.romakononovich.notes.R
 
 
@@ -20,21 +19,21 @@ import xyz.romakononovich.notes.R
  */
 class WidgetActivity : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        for (i in 0 until appWidgetIds.size) {
-            updateAppWidget(context, appWidgetManager, appWidgetIds[i])
+        appWidgetIds.forEach {
+            updateAppWidget(context, appWidgetManager, it)
         }
     }
 
 
     override fun onEnabled(context: Context) {
-        Toast.makeText(context, ADD_WIDGET, Toast.LENGTH_SHORT).apply{
+        Toast.makeText(context, ADD_WIDGET, Toast.LENGTH_SHORT).apply {
             view.findViewById<TextView>(android.R.id.message).gravity = Gravity.CENTER
             show()
         }
     }
 
     override fun onDisabled(context: Context) {
-        Toast.makeText(context, DELETE_WIDGET, Toast.LENGTH_SHORT).apply{
+        Toast.makeText(context, DELETE_WIDGET, Toast.LENGTH_SHORT).apply {
             view.findViewById<TextView>(android.R.id.message).gravity = Gravity.CENTER
             show()
         }
@@ -47,7 +46,7 @@ class WidgetActivity : AppWidgetProvider() {
 
             val views = RemoteViews(context.packageName, R.layout.activity_widget)
             // Create an Intent to launch Activity
-            val intent = Intent(context, LoginActivity::class.java).putExtra("isWidget",true)
+            val intent = Intent(context, LoginActivity::class.java).putExtra("isWidget", true)
             val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
             views.setOnClickPendingIntent(R.id.widget, pendingIntent)
 

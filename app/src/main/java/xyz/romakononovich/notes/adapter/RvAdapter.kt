@@ -1,16 +1,12 @@
 package xyz.romakononovich.notes.adapter
 
-import android.content.Intent
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import kotlinx.android.synthetic.main.item_note.view.*
-import xyz.romakononovich.notes.Constants.FORMAT_DATE
-import xyz.romakononovich.notes.Constants.TIMESTAMP
-import xyz.romakononovich.notes.activity.EditNoteActivity
+import xyz.romakononovich.notes.FORMAT_DATE
 import xyz.romakononovich.notes.R
 import xyz.romakononovich.notes.models.Note
 import java.text.SimpleDateFormat
@@ -19,50 +15,56 @@ import java.util.*
 /**
  * Created by romank on 26.01.18.
  */
-class RvAdapter(private val listNotes: ArrayList<Note>) : RecyclerView.Adapter<RvAdapter.ViewHolder>() {
+class RvAdapter(
+        context: Context,
+        private val itemClickListener: RvAdapter.ItemClickListener,
+        notes: List<Note>
+) : RecyclerView.Adapter<RvAdapter.ViewHolder>() {
+
+    private val notes: MutableList<Note> = ArrayList(notes)
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder? {
-        val view = LayoutInflater.from(parent?.context).inflate(R.layout.item_note, parent, false)
-        val holder = ViewHolder(view)
-        view.setOnClickListener {
-            val intent = Intent(view.context, EditNoteActivity::class.java)
-            intent.putExtra(TIMESTAMP, listNotes[holder.adapterPosition].timestamp)
-            view.context.startActivity(intent)
-        }
-        return holder
+        val view = inflater.inflate(R.layout.item_note, parent, false)
+        return ViewHolder(view, itemClickListener)
     }
 
-    override fun getItemCount(): Int {
-        return listNotes.size
-    }
+    override fun getItemCount() = notes.size
 
     fun refreshListNotes(list: ArrayList<Note>) {
-        listNotes.clear()
-        listNotes.addAll(list)
+        notes.clear()
+        notes.addAll(list)
         notifyDataSetChanged()
     }
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(listNotes[position])
-        holder.noteTitle
+        holder.bindItems(notes[position])
     }
 
     fun removeItem(position: Int) {
-        listNotes.remove(listNotes[position])
+        notes.remove(notes[position])
         notifyItemRemoved(position)
-        notifyItemRangeChanged(position, listNotes.size)
-
-
+        notifyItemRangeChanged(position, notes.size)
     }
 
-    class ViewHolder(private val v: View) : RecyclerView.ViewHolder(v) {
+    class ViewHolder(
+            view: View,
+            itemClickListener: RvAdapter.ItemClickListener
+    ) : RecyclerView.ViewHolder(view) {
 
-        var noteTitle = itemView.tv_title
+        init {
+            itemView.setOnClickListener { itemClickListener.onItemClicked(this) }
+        }
+
+        lateinit var note: Note
+            private set
+
         fun bindItems(note: Note) {
-            v.tv_title.text = note.title
-            v.tv_note.text = note.note
-            v.tv_date.text = setDate(note.timestamp)
+            this.note = note
+            itemView.tvTitle.text = note.title
+            itemView.tvNote.text = note.note
+            itemView.tvDate.text = setDate(note.timestamp)
         }
 
 
@@ -72,5 +74,9 @@ class RvAdapter(private val listNotes: ArrayList<Note>) : RecyclerView.Adapter<R
             return dateFormat.format(date)
         }
 
+    }
+
+    interface ItemClickListener {
+        fun onItemClicked(viewHolder: ViewHolder)
     }
 }

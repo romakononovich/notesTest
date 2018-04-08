@@ -7,7 +7,7 @@
     android:gravity="top"
     tools:context=".activity.WidgetActivity" >
     <ImageView
-        android:id="@+id/iv_widget"
+        android:id="@+id/ivWidget"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/widget_bg"

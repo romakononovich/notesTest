@@ -9,9 +9,10 @@ import android.annotation.TargetApi
 import android.annotation.SuppressLint
 import android.support.annotation.Nullable
 import android.util.Base64
-import xyz.romakononovich.notes.Constants.KEY_ALIAS
-import xyz.romakononovich.notes.Constants.KEY_STORE
-import xyz.romakononovich.notes.Constants.TRANSFORMATION
+import android.util.Log
+import xyz.romakononovich.notes.KEY_ALIAS
+import xyz.romakononovich.notes.KEY_STORE
+import xyz.romakononovich.notes.TRANSFORMATION
 import java.io.IOException
 import java.security.*
 import java.security.cert.CertificateException
@@ -32,10 +33,11 @@ import javax.crypto.spec.PSource
 @TargetApi(Build.VERSION_CODES.M)
 object CryptoUtils {
 
-
+    private val TAG = javaClass.simpleName
     private lateinit var sKeyStore: KeyStore
     private lateinit var sKeyPairGenerator: KeyPairGenerator
     private lateinit var sCipher: Cipher
+
 
 
     private val keyStore: Boolean
@@ -45,13 +47,13 @@ object CryptoUtils {
                 sKeyStore.load(null)
                 return true
             } catch (e: KeyStoreException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             } catch (e: IOException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             } catch (e: NoSuchAlgorithmException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             } catch (e: CertificateException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             }
 
             return false
@@ -65,9 +67,9 @@ object CryptoUtils {
                 sKeyPairGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, KEY_STORE)
                 return true
             } catch (e: NoSuchAlgorithmException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             } catch (e: NoSuchProviderException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             }
 
             return false
@@ -81,9 +83,9 @@ object CryptoUtils {
                 sCipher = Cipher.getInstance(TRANSFORMATION)
                 return true
             } catch (e: NoSuchAlgorithmException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             } catch (e: NoSuchPaddingException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             }
 
             return false
@@ -94,7 +96,7 @@ object CryptoUtils {
             try {
                 return sKeyStore.containsAlias(KEY_ALIAS) || generateNewKey()
             } catch (e: KeyStoreException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             }
 
             return false
@@ -113,10 +115,10 @@ object CryptoUtils {
                 val bytes = sCipher.doFinal(inputString.toByteArray())
                 return Base64.encodeToString(bytes, Base64.NO_WRAP)
             }
-        } catch (exception: IllegalBlockSizeException) {
-            exception.printStackTrace()
-        } catch (exception: BadPaddingException) {
-            exception.printStackTrace()
+        } catch (e: IllegalBlockSizeException) {
+            Log.d(TAG, e.printStackTrace().toString())
+        } catch (e: BadPaddingException) {
+            Log.d(TAG, e.printStackTrace().toString())
         }
 
         return null
@@ -156,7 +158,7 @@ object CryptoUtils {
                 sKeyPairGenerator.generateKeyPair()
                 return true
             } catch (e: InvalidAlgorithmParameterException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             }
 
         }
@@ -180,21 +182,21 @@ object CryptoUtils {
             deleteInvalidKey()
 
         } catch (e: KeyStoreException) {
-            e.printStackTrace()
+            Log.d(TAG, e.printStackTrace().toString())
         } catch (e: CertificateException) {
-            e.printStackTrace()
+            Log.d(TAG, e.printStackTrace().toString())
         } catch (e: UnrecoverableKeyException) {
-            e.printStackTrace()
+            Log.d(TAG, e.printStackTrace().toString())
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.d(TAG, e.printStackTrace().toString())
         } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
+            Log.d(TAG, e.printStackTrace().toString())
         } catch (e: InvalidKeyException) {
-            e.printStackTrace()
+            Log.d(TAG, e.printStackTrace().toString())
         } catch (e: InvalidKeySpecException) {
-            e.printStackTrace()
+            Log.d(TAG, e.printStackTrace().toString())
         } catch (e: InvalidAlgorithmParameterException) {
-            e.printStackTrace()
+            Log.d(TAG, e.printStackTrace().toString())
         }
 
         return false
@@ -224,7 +226,7 @@ object CryptoUtils {
             try {
                 sKeyStore.deleteEntry(KEY_ALIAS)
             } catch (e: KeyStoreException) {
-                e.printStackTrace()
+                Log.d(TAG, e.printStackTrace().toString())
             }
 
         }

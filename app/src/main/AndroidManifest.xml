@@ -31,7 +31,9 @@
             android:theme="@style/ToolbarWhite"/>
         <activity android:name=".activity.MainActivity"
             android:theme="@style/ToolbarWhite"/>
-
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="e3300be1c9ceb51cfe4b7f0041170d421e6660d5" />
     </application>
 
 </manifest>

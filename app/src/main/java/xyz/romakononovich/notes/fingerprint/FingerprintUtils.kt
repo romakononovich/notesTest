@@ -26,7 +26,6 @@ object FingerprintUtils {
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private fun checkSensorState(context: Context): SensorState {
         if (checkFingerprintCompatibility(context)) {
-
             val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
             if (!keyguardManager.isKeyguardSecure) {
                 return SensorState.NOT_BLOCKED
